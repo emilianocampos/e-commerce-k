@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda Online de Moscú! | Indumentaria Streetwear</title>
+  <meta name="description" content="Comprá ropa urbana y streetwear online en Moscú Showroom. Hasta 6 cuotas sin interés, 15% OFF con transferencia y envíos a todo el país." />
+
+  <!-- Google Fonts: Literata (Headings) & Plus Jakarta Sans (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/storefront.css" />
+  <link rel="stylesheet" href="css/product.css" />
+  <link rel="stylesheet" href="css/cart-checkout.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+  <!-- Floating Switcher: Storefront <-> Admin Panel -->
+  <button id="modeSwitcherPill" class="admin-mode-pill" onclick="window.toggleAppMode()" title="Alternar entre la tienda y el panel de administración">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <rect x="3" y="3" width="7" height="7"></rect>
+      <rect x="14" y="3" width="7" height="7"></rect>
+      <rect x="14" y="14" width="7" height="7"></rect>
+      <rect x="3" y="14" width="7" height="7"></rect>
+    </svg>
+    <span id="modeSwitcherText">Panel Admin</span>
+  </button>
+
+
+  <!-- ========================================================================
+       1. STOREFRONT VIEW
+       ======================================================================== -->
+  <div id="storefrontView">
+    
+    <!-- Announcement Bar (Red Bar Ticker) -->
+    <section class="section-adbar">
+      <div class="adbar-ticker" id="adbarTicker">
+        <!-- Injected dynamically from store state -->
+      </div>
+    </section>
+
+    <!-- Main Header -->
+    <header class="head-main">
+      <div class="header-container">
+        <div class="header-top-row">
+          
+          <!-- Search Form (Desktop) -->
+          <div class="header-search-form">
+            <div class="search-input-wrapper">
+              <input type="text" id="headerSearchInput" class="search-input" placeholder="¿Qué estás buscando?" autocomplete="off" />
+              <button type="button" class="search-btn" aria-label="Buscar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </button>
+            </div>
+            <!-- Search Suggest Box -->
+            <div id="searchSuggestBox" class="search-suggest-box"></div>
+          </div>
+
+          <!-- Centered Brand Logo -->
+          <div class="header-logo">
+            <a href="#" onclick="window.filterByCategory('todos'); return false;">
+              <h1 class="header-logo-text">Moscú!</h1>
+              <div class="header-logo-sub">SHOWROOM • AYACUCHO</div>
+            </a>
+          </div>
+
+          <!-- Utilities (Right) -->
+          <div class="header-utilities">
+            <!-- Account -->
+            <a href="#" class="utility-link" onclick="alert('Acceso a cuenta de usuario: Iniciar sesión o registrarse.'); return false;" title="Mi Cuenta">
+              <svg class="utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </a>
+
+            <!-- Cart Trigger -->
+            <a href="#" class="utility-link js-open-cart" title="Carrito de Compras">
+              <svg class="utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              <span class="cart-badge js-cart-count" style="display:none;">0</span>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Desktop Navigation Bar -->
+        <nav class="nav-desktop-bar">
+          <ul class="nav-desktop-list">
+            <li>
+              <a href="#" class="nav-item-link" onclick="window.filterByCategory('todos'); return false;">Inicio</a>
+            </li>
+            <li class="nav-item-dropdown">
+              <a href="#" class="nav-item-link" onclick="return false;">
+                <span>Productos</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </a>
+              <div class="dropdown-menu-box" id="navCategoriesDropdown">
+                <!-- Injected from store categories -->
+              </div>
+            </li>
+            <li>
+              <a href="#sectionLiquidacion" class="nav-item-link highlight" onclick="window.filterByCategory('liquidacion');">Liquidación!</a>
+            </li>
+            <li>
+              <a href="#sectionLookbook" class="nav-item-link">Comprá el Outfit</a>
+            </li>
+            <li>
+              <a href="#sectionShowroom" class="nav-item-link">Nuestro Showroom</a>
+            </li>
+            <li>
+              <a href="#" class="nav-item-link" onclick="window.setAppMode('admin'); return false;" style="color: #2563eb; font-weight: 700;">
+                ⚙️ Panel Admin
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Carousel -->
+    <section class="hero-carousel-section">
+      <div class="hero-slider" id="heroSlider">
+        <!-- Injected from store hero slides -->
+      </div>
+      <button class="hero-slider-arrow hero-slider-prev" onclick="window.prevHeroSlide()" aria-label="Anterior">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <button class="hero-slider-arrow hero-slider-next" onclick="window.nextHeroSlide()" aria-label="Siguiente">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+      <div class="hero-slider-bullets" id="heroBullets"></div>
+    </section>
+
+    <!-- Trust Badges Section -->
+    <section class="trust-badges-section">
+      <div class="trust-badges-grid">
+        <div class="trust-badge-card">
+          <div class="trust-badge-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+          </div>
+          <div>
+            <div class="trust-badge-title">Envíos a todo el país</div>
+            <div class="trust-badge-sub">Correo Argentino & Andreani. Gratis superando $150.000</div>
+          </div>
+        </div>
+
+        <div class="trust-badge-card">
+          <div class="trust-badge-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          </div>
+          <div>
+            <div class="trust-badge-title">Hasta 6 Cuotas Sin Interés</div>
+            <div class="trust-badge-sub">Con todas las tarjetas bancarias mediante Mercado Pago</div>
+          </div>
+        </div>
+
+        <div class="trust-badge-card">
+          <div class="trust-badge-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><line x1="12" y1="6" x2="12" y2="8"></line><line x1="12" y1="16" x2="12" y2="18"></line></svg>
+          </div>
+          <div>
+            <div class="trust-badge-title">15% OFF Transferencia</div>
+            <div class="trust-badge-sub">Descuento automático pagando por transferencia bancaria</div>
+          </div>
+        </div>
+
+        <div class="trust-badge-card">
+          <div class="trust-badge-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          </div>
+          <div>
+            <div class="trust-badge-title">Showroom en Ayacucho</div>
+            <div class="trust-badge-sub">9 de Julio 837. Retirá tus pedidos online sin costo</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Categories Showcase -->
+    <section class="categories-showcase-section">
+      <div class="categories-visual-grid" id="categoriesVisualGrid">
+        <!-- Injected dynamically -->
+      </div>
+    </section>
+
+    <!-- Product Section 1: NUEVO DROP -->
+    <section class="product-showcase-section" id="sectionNuevoDrop">
+      <div class="section-header-bar">
+        <h2 class="section-title">Nuevo Drop</h2>
+        <a href="#sectionAllProducts" class="section-view-all" onclick="window.filterByCategory('drop-41')">Ver Todo →</a>
+      </div>
+      <div class="products-grid" id="gridNuevoDrop">
+        <!-- Injected dynamically -->
+      </div>
+    </section>
+
+    <!-- Product Section 2: LIQUIDACIÓN -->
+    <section class="product-showcase-section" id="sectionLiquidacion">
+      <div class="section-header-bar">
+        <h2 class="section-title">Liquidación!</h2>
+        <a href="#sectionAllProducts" class="section-view-all" onclick="window.filterByCategory('liquidacion')">Ver Ofertas →</a>
+      </div>
+      <div class="products-grid" id="gridLiquidacion">
+        <!-- Injected dynamically -->
+      </div>
+    </section>
+
+    <!-- Lookbook Section (Shop the Look) -->
+    <section class="lookbook-banner-section" id="sectionLookbook">
+      <div class="lookbook-card">
+        <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1200&auto=format&fit=crop" alt="Lookbook Moscú" class="lookbook-img" />
+        <div class="lookbook-content">
+          <div class="lookbook-tag">Comprá el Outfit</div>
+          <h2 class="lookbook-title">Moscú Streetwear Lookbook</h2>
+          <p class="lookbook-desc">
+            Diseñamos siluetas amplias, texturas de alto gramaje y calces relajados pensados para el uso diario sin perder la vanguardia de la moda contemporánea.
+          </p>
+          <button class="hero-cta-btn" onclick="window.filterByCategory('pantalones')">VER LOOKS COMPLETOS</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: All / Filtered Products Grid -->
+    <section class="product-showcase-section" id="sectionAllProducts">
+      <div class="section-header-bar">
+        <h2 class="section-title" id="activeCategoryTitle">Todos los Productos</h2>
+        <button class="btn-table-action" onclick="window.filterByCategory('todos')">Restablecer Filtros</button>
+      </div>
+      <div class="products-grid" id="gridAllProducts">
+        <!-- Injected dynamically -->
+      </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+      <div class="newsletter-container">
+        <h2 class="newsletter-title">Unite a Moscú Club</h2>
+        <p class="newsletter-desc">Recibí un 10% OFF en tu primera compra y enterate antes que nadie de los nuevos drops y liquidaciones.</p>
+        <form id="newsletterForm" class="newsletter-form">
+          <input type="email" class="newsletter-input" placeholder="Ingresá tu correo electrónico" required />
+          <button type="submit" class="newsletter-btn">Suscribirme</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Showroom Information & Footer -->
+    <footer class="site-footer" id="sectionShowroom">
+      <div class="footer-grid">
+        <div class="footer-col footer-about">
+          <h3 style="font-family:var(--heading-font);font-size:26px;font-weight:700;margin-bottom:8px;">Moscú!</h3>
+          <p>
+            Showroom exclusivo de indumentaria y streetwear ubicado en Ayacucho, Provincia de Buenos Aires. Envíos a todo el país y retiro en local.
+          </p>
+          <div style="margin-top: 14px; font-size: 13px; color: #4b5563;">
+            📍 <strong>Showroom:</strong> 9 de Julio 837, Ayacucho<br/>
+            ⏰ <strong>Horarios:</strong> Lun a Sáb 10:00 - 13:00 / 16:30 - 20:30 hs<br/>
+            📱 <strong>WhatsApp:</strong> +54 9 249 412-3456
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navegación</h4>
+          <ul>
+            <li><a href="#" onclick="window.filterByCategory('drop-41')">Nuevo Drop</a></li>
+            <li><a href="#" onclick="window.filterByCategory('pantalones')">Pantalones & Cargos</a></li>
+            <li><a href="#" onclick="window.filterByCategory('hoodies')">Hoodies & Buzos</a></li>
+            <li><a href="#" onclick="window.filterByCategory('remeras')">Remeras Oversize</a></li>
+            <li><a href="#" onclick="window.filterByCategory('liquidacion')">Liquidación!</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Ayuda & Contacto</h4>
+          <ul>
+            <li><a href="#" onclick="window.openSizeGuide()">Guía de Talles</a></li>
+            <li><a href="#" onclick="alert('Envíos por Correo Argentino y Andreani. Demora estimada de 3 a 5 días hábiles.'); return false;">Tiempos de Envío</a></li>
+            <li><a href="#" onclick="alert('Tenés 30 días para realizar cambios con tu ticket o número de orden.'); return false;">Políticas de Cambio</a></li>
+            <li><a href="https://wa.me/5492494123456" target="_blank">Atención por WhatsApp</a></li>
+            <li><a href="#" onclick="window.setAppMode('admin'); return false;">Acceso Panel Admin</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Medios de Pago</h4>
+          <p style="font-size:12px;color:#6b7280;margin-bottom:12px;">Hasta 6 cuotas sin interés con tarjetas bancarias y 15% OFF por transferencia.</p>
+          <div class="payment-shipping-logos">
+            <span class="badge-pay">Mercado Pago</span>
+            <span class="badge-pay">Visa</span>
+            <span class="badge-pay">Mastercard</span>
+            <span class="badge-pay">Naranja</span>
+            <span class="badge-pay">Transferencia</span>
+          </div>
+          <h4 style="margin-top:20px;margin-bottom:8px;">Formas de Envío</h4>
+          <div class="payment-shipping-logos">
+            <span class="badge-pay">Correo Argentino</span>
+            <span class="badge-pay">Andreani</span>
+            <span class="badge-pay">Retiro Showroom</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 Moscú Showroom. Todos los derechos reservados. Desarrollado con estándar e-commerce premium.</span>
+        <span>Ayacucho, Buenos Aires, Argentina.</span>
+      </div>
+    </footer>
+
+    <!-- Mobile Fixed Tabnav -->
+    <nav class="mobile-tabnav">
+      <button class="tabnav-btn active" onclick="window.filterByCategory('todos')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Inicio</span>
+      </button>
+      <button class="tabnav-btn" onclick="window.openMobileMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <span>Menú</span>
+      </button>
+      <button class="tabnav-btn" onclick="document.getElementById('headerSearchInput').focus(); window.scrollTo(0, 0);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>Buscar</span>
+      </button>
+      <button class="tabnav-btn" onclick="window.setAppMode('admin')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <span>Admin</span>
+      </button>
+      <button class="tabnav-btn js-open-cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        <span class="tabnav-cart-count js-cart-count" style="display:none;">0</span>
+        <span>Carrito</span>
+      </button>
+    </nav>
+
+    <!-- WhatsApp Floating Action Button -->
+    <a href="https://wa.me/5492494123456?text=Hola%20Moscú%20Showroom!%20Quería%20hacer%20una%20consulta." target="_blank" class="whatsapp-floating-btn" aria-label="Contacto por WhatsApp">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.072.043.419-.101.824z"/>
+      </svg>
+    </a>
+
+  </div>
+
+  <!-- ========================================================================
+       2. MODALS & DRAWERS (Cart, PDP, Checkout, Size Guide)
+       ======================================================================== -->
+
+  <!-- Cart Drawer -->
+  <div id="cartBackdrop" class="cart-drawer-backdrop"></div>
+  <aside id="cartDrawer" class="cart-drawer">
+    <div class="cart-header">
+      <h3>Carrito de Compras</h3>
+      <button id="cartCloseBtn" class="cart-close-btn" aria-label="Cerrar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <!-- Free Shipping Bar -->
+    <div id="freeShippingBox" class="cart-free-shipping-box"></div>
+
+    <!-- Scrollable Items List -->
+    <div id="cartItemsList" class="cart-items-list"></div>
+
+    <!-- Cart Footer with Totals & Checkout Trigger -->
+    <div id="cartFooter" class="cart-footer"></div>
+  </aside>
+
+  <!-- Product Detail Page (PDP) Modal -->
+  <div id="pdpModal" class="pdp-modal-overlay">
+    <div class="pdp-modal-container">
+      <button id="pdpCloseBtn" class="pdp-modal-close" aria-label="Cerrar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div id="pdpModalContent"></div>
+    </div>
+  </div>
+
+  <!-- Size Guide Modal -->
+  <div id="sizeGuideModal" class="size-guide-modal">
+    <div class="size-guide-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="font-family:var(--heading-font); font-size:20px; font-weight:700;">Guía de Talles y Medidas</h3>
+        <button id="sizeGuideClose" style="background:none; border:none; cursor:pointer; font-size:20px;">×</button>
+      </div>
+      <p style="font-size:12px; color:#64748b;">Medidas corporales de referencia expresadas en centímetros.</p>
+      
+      <table class="size-guide-table">
+        <thead>
+          <tr>
+            <th>Talle</th>
+            <th>Cintura (cm)</th>
+            <th>Cadera (cm)</th>
+            <th>Largo (cm)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>38 (S)</td><td>74 - 78</td><td>94 - 98</td><td>104</td></tr>
+          <tr><td>40 (M)</td><td>79 - 83</td><td>99 - 103</td><td>106</td></tr>
+          <tr><td>42 (L)</td><td>84 - 88</td><td>104 - 108</td><td>108</td></tr>
+          <tr><td>44 (XL)</td><td>89 - 94</td><td>109 - 114</td><td>110</td></tr>
+          <tr><td>46 (XXL)</td><td>95 - 100</td><td>115 - 120</td><td>112</td></tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:16px; font-size:11px; color:#6b7280; line-height:1.5;">
+        * Tip: Nuestras prendas cuentan con moldería de corte holgado / baggy. Si preferís un calce más entallado, te sugerimos elegir un talle menor al habitual.
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi-Step Checkout Modal -->
+  <div id="checkoutModal" class="checkout-modal-overlay">
+    <div class="checkout-card">
+      <div class="checkout-header">
+        <div class="checkout-steps-bar">
+          <div class="checkout-step-tab active" data-step="1">
+            <span class="checkout-step-num">1</span>
+            <span>Contacto y Envío</span>
+          </div>
+          <span style="color:#cbd5e1;">›</span>
+          <div class="checkout-step-tab" data-step="2">
+            <span class="checkout-step-num">2</span>
+            <span>Dirección</span>
+          </div>
+          <span style="color:#cbd5e1;">›</span>
+          <div class="checkout-step-tab" data-step="3">
+            <span class="checkout-step-num">3</span>
+            <span>Pago</span>
+          </div>
+        </div>
+        <button id="checkoutCloseBtn" class="cart-close-btn" aria-label="Cerrar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="checkout-body">
+        <div class="checkout-form-side" id="checkoutStepContent">
+          <!-- Injected dynamically per step -->
+        </div>
+
+        <div class="checkout-summary-side" id="checkoutSummaryBox">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Drawer -->
+  <div id="mobileMenuBackdrop" class="cart-drawer-backdrop" onclick="window.closeMobileMenu()"></div>
+  <aside id="mobileMenuDrawer" class="cart-drawer" style="right:auto; left:0; transform:translateX(-100%);">
+    <div class="cart-header">
+      <h3>Menú</h3>
+      <button class="cart-close-btn" onclick="window.closeMobileMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div style="padding: 20px; overflow-y: auto;">
+      <ul id="mobileNavCategories" style="list-style: none;">
+        <!-- Injected dynamically -->
+      </ul>
+      <div style="margin-top: 30px;">
+        <button class="btn-checkout-start" onclick="window.setAppMode('admin'); window.closeMobileMenu();" style="background:#2563eb;">
+          <span>Ir al Panel Admin</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       3. DEDICATED ADMIN DASHBOARD & CMS
+       ======================================================================== -->
+  <div id="adminView" class="admin-app-container">
+    
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-header">
+        <span class="admin-brand-logo">Moscú!</span>
+        <span class="admin-brand-tag">ADMIN CMS</span>
+      </div>
+
+      <nav class="admin-nav">
+        <button class="admin-nav-item active" data-tab="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="admin-nav-item" data-tab="products">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+          <span>Productos (CRUD)</span>
+        </button>
+
+        <button class="admin-nav-item" data-tab="categories">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          <span>Categorías</span>
+        </button>
+
+        <button class="admin-nav-item" data-tab="banners">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          <span>Banners & CMS</span>
+        </button>
+
+        <button class="admin-nav-item" data-tab="orders">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+          <span>Pedidos</span>
+          <span class="admin-nav-badge">NUEVOS</span>
+        </button>
+
+        <button class="admin-nav-item" data-tab="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Configuración</span>
+        </button>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <button class="btn-back-storefront" onclick="window.setAppMode('storefront')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <span>Ver Tienda Online</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <main class="admin-main-wrapper">
+      <!-- Topbar -->
+      <div class="admin-topbar">
+        <h2 class="admin-topbar-title" id="adminTopbarTitle">Dashboard & Métricas</h2>
+        <div class="admin-topbar-actions">
+          <button class="btn-admin-cta" onclick="window.openNewProductModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>+ Nuevo Producto</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Panel 1: Dashboard -->
+      <section class="admin-panel-view active" id="panel-dashboard">
+        <!-- KPIs Grid -->
+        <div class="admin-kpis-grid">
+          <div class="kpi-card">
+            <div class="kpi-card-top">
+              <span class="kpi-title">Ventas Totales</span>
+              <div class="kpi-icon-wrap">💵</div>
+            </div>
+            <div class="kpi-value" id="kpiTotalSales">$0</div>
+            <div class="kpi-sub">↑ +18.4% vs mes anterior</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-top">
+              <span class="kpi-title">Total Pedidos</span>
+              <div class="kpi-icon-wrap">📦</div>
+            </div>
+            <div class="kpi-value" id="kpiTotalOrders">0</div>
+            <div class="kpi-sub">↑ +12 órdenes esta semana</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-top">
+              <span class="kpi-title">Ticket Promedio</span>
+              <div class="kpi-icon-wrap">🎯</div>
+            </div>
+            <div class="kpi-value" id="kpiAvgTicket">$0</div>
+            <div class="kpi-sub">↑ $98.500 objetivo</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-top">
+              <span class="kpi-title">Stock Crítico</span>
+              <div class="kpi-icon-wrap">⚠️</div>
+            </div>
+            <div class="kpi-value" id="kpiLowStock">0</div>
+            <div class="kpi-sub warning">Prendas con ≤ 2 unidades</div>
+          </div>
+        </div>
+
+        <!-- Analytics & Chart -->
+        <div class="admin-analytics-grid">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3 class="admin-card-title">Evolución Semanal de Ventas</h3>
+              <span style="font-size:12px;color:#64748b;">Moneda: ARS ($)</span>
+            </div>
+            <div class="sales-chart-container" id="adminSalesChart"></div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3 class="admin-card-title">Resumen de Tienda</h3>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:14px; font-size:13px;">
+              <div style="display:flex; justify-content:space-between;">
+                <span style="color:#64748b;">Financiación activa:</span>
+                <strong>6 Cuotas Sin Interés</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span style="color:#64748b;">Descuento Transferencia:</span>
+                <strong style="color:#15803d;">15% OFF</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span style="color:#64748b;">Envío gratis desde:</span>
+                <strong>$150.000</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span style="color:#64748b;">Showroom:</span>
+                <span>Ayacucho, Bs As</span>
+              </div>
+              <button class="btn-table-action" style="margin-top:10px; width:100%; padding:10px;" onclick="window.switchAdminTab('settings')">
+                Editar Configuración
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders Table -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3 class="admin-card-title">Últimos Pedidos Registrados</h3>
+            <button class="btn-table-action" onclick="window.switchAdminTab('orders')">Ver Todos</button>
+          </div>
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Orden</th>
+                  <th>Cliente</th>
+                  <th>Prendas</th>
+                  <th>Total</th>
+                  <th>Estado</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="dashboardRecentOrders"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel 2: Products CRUD -->
+      <section class="admin-panel-view" id="panel-products">
+        <div class="admin-filter-bar">
+          <div class="admin-search-box">
+            <svg class="admin-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="adminProductSearch" class="admin-search-input" placeholder="Buscar por nombre o SKU..." />
+          </div>
+
+          <div style="display:flex; gap:12px;">
+            <select id="adminProductCategoryFilter" class="form-select" style="min-width:180px;"></select>
+            <button class="btn-admin-cta" onclick="window.openNewProductModal()">+ Agregar Producto</button>
+          </div>
+        </div>
+
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock Total</th>
+                <th>Talles</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="adminProductsTbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Panel 3: Categories CRUD -->
+      <section class="admin-panel-view" id="panel-categories">
+        <div class="admin-filter-bar">
+          <h3 class="admin-card-title">Colecciones y Categorías Activas</h3>
+          <button class="btn-admin-cta" onclick="window.addNewCategoryPrompt()">+ Nueva Categoría</button>
+        </div>
+
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Slug URL</th>
+                <th>Badge</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="adminCategoriesTbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Panel 4: Banners & CMS -->
+      <section class="admin-panel-view" id="panel-banners">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+          <!-- Announcements Bar CMS -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3 class="admin-card-title">Frases de la Barra de Anuncios (Roja)</h3>
+              <button class="btn-table-action" onclick="window.addAnnouncementPrompt()">+ Agregar Frase</button>
+            </div>
+            <div id="adminAnnouncementsList"></div>
+          </div>
+
+          <!-- Hero Carousel CMS -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3 class="admin-card-title">Diapositivas del Carrusel Hero</h3>
+              <button class="btn-table-action" onclick="window.addHeroSlidePrompt()">+ Agregar Slide</button>
+            </div>
+            <div id="adminHeroSlidesList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel 5: Orders Management -->
+      <section class="admin-panel-view" id="panel-orders">
+        <div class="admin-filter-bar">
+          <h3 class="admin-card-title">Listado Completo de Órdenes</h3>
+        </div>
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>N° Orden</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th>Medio de Pago</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="adminOrdersTbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Panel 6: Settings & Reset -->
+      <section class="admin-panel-view" id="panel-settings">
+        <div class="admin-card" style="max-width:760px;">
+          <div class="admin-card-header">
+            <h3 class="admin-card-title">Parámetros Financieros y de Envío</h3>
+          </div>
+          <form id="adminSettingsForm" onsubmit="window.saveSettings(event)">
+            <div class="form-row-2">
+              <div class="admin-form-group">
+                <label class="admin-form-label">Cantidad de Cuotas Sin Interés</label>
+                <input type="number" id="setCuotas" class="admin-form-input" min="1" max="18" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label">% Descuento por Transferencia</label>
+                <input type="number" id="setTransferDiscount" class="admin-form-input" min="0" max="50" required />
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="admin-form-group">
+                <label class="admin-form-label">Monto Mínimo para Envío Gratis ($)</label>
+                <input type="number" id="setShippingThreshold" class="admin-form-input" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label">Costo Envío Correo Argentino ($)</label>
+                <input type="number" id="setCostCorreo" class="admin-form-input" required />
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="admin-form-group">
+                <label class="admin-form-label">Costo Envío Andreani Prioritario ($)</label>
+                <input type="number" id="setCostAndreani" class="admin-form-input" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label">Número de WhatsApp de Atención (con código país)</label>
+                <input type="text" id="setPhoneWhatsapp" class="admin-form-input" required />
+              </div>
+            </div>
+
+            <div class="admin-form-group">
+              <label class="admin-form-label">Dirección física del Showroom</label>
+              <input type="text" id="setShowroomAddress" class="admin-form-input" required />
+            </div>
+
+            <button type="submit" class="btn-admin-cta" style="background:#10b981; width:100%; justify-content:center; padding:14px; font-size:14px;">
+              Guardar Configuración
+            </button>
+          </form>
+
+          <div style="margin-top:40px; padding-top:20px; border-top:1px solid var(--border-color);">
+            <h4 style="color:#dc2626; font-size:14px; font-weight:700; margin-bottom:6px;">Zona de Peligro / Reset</h4>
+            <p style="font-size:12px; color:#64748b; margin-bottom:14px;">¿Deseás reiniciar el catálogo y pedidos con las prendas demo iniciales de Moscú?</p>
+            <button type="button" class="btn-table-action delete" onclick="window.resetStoreToDefaults()">
+              Restablecer Catálogo Semilla
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ========================================================================
+       4. ADMIN PRODUCT MODAL (Create / Edit)
+       ======================================================================== -->
+  <div id="adminProductModal" class="admin-modal-overlay">
+    <div class="admin-modal-card">
+      <div class="admin-modal-header">
+        <h3 class="admin-modal-title" id="adminModalProductTitle">Crear Nuevo Producto</h3>
+        <button id="adminProductModalClose" class="cart-close-btn" type="button">×</button>
+      </div>
+
+      <form id="adminProductForm">
+        <div class="admin-modal-body">
+          <div class="form-row-2">
+            <div class="admin-form-group">
+              <label class="admin-form-label">Nombre del Producto *</label>
+              <input type="text" id="pFormName" class="admin-form-input" placeholder="ej: Bermuda Baggy Saint" required />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-form-label">Código SKU</label>
+              <input type="text" id="pFormSku" class="admin-form-input" placeholder="ej: MSC-001" />
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="admin-form-group">
+              <label class="admin-form-label">Categoría *</label>
+              <select id="pFormCategory" class="admin-form-select"></select>
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-form-label">Precio Regular ($) *</label>
+              <input type="number" id="pFormPrice" class="admin-form-input" placeholder="95000" required />
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="admin-form-group">
+              <label class="admin-form-label">Precio Comparación (Tachado, Opcional)</label>
+              <input type="number" id="pFormComparePrice" class="admin-form-input" placeholder="110000" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-form-label">% Descuento Transferencia</label>
+              <input type="number" id="pFormDiscountPct" class="admin-form-input" value="15" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label class="admin-form-label">Descripción de la Prenda</label>
+            <textarea id="pFormDesc" class="admin-form-textarea" rows="3" placeholder="Detalles de calce, moldería, tela y confección..."></textarea>
+          </div>
+
+          <div class="admin-form-group">
+            <label class="admin-form-label">Etiquetas / Badges (separadas por coma)</label>
+            <input type="text" id="pFormTags" class="admin-form-input" placeholder="ej: NUEVO DROP, 15% OFF, MÁS VENDIDO" />
+          </div>
+
+          <!-- Image Manager -->
+          <div class="admin-form-group">
+            <label class="admin-form-label">Imágenes del Producto</label>
+            <div style="display:flex; gap:8px; margin-bottom:10px;">
+              <input type="url" id="adminImageUrlInput" class="admin-form-input" placeholder="Pegar URL de imagen (https://...)" />
+              <button type="button" id="adminAddImageBtn" class="btn-admin-cta" style="flex-shrink:0;">+ Añadir URL</button>
+            </div>
+            <div class="admin-image-upload-box" onclick="document.getElementById('adminImageFileInput').click()">
+              <input type="file" id="adminImageFileInput" accept="image/*" style="display:none;" />
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:6px; color:#64748b;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+              <div style="font-size:12px; font-weight:700; color:#334155;">Hacé clic para subir una foto desde tu computadora</div>
+              <div style="font-size:11px; color:#94a3b8;">PNG, JPG, WEBP</div>
+            </div>
+            <div id="adminImagePreviews" class="admin-thumbs-preview"></div>
+          </div>
+
+          <!-- Sizes & Stock Matrix -->
+          <div class="admin-form-group">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <label class="admin-form-label" style="margin-bottom:0;">Talles y Stock Disponible</label>
+              <button type="button" class="btn-table-action" onclick="window.addSizeRowToMatrix()">+ Agregar Talle</button>
+            </div>
+            <table class="size-stock-table">
+              <thead>
+                <tr style="text-align:left; font-size:11px; color:#64748b;">
+                  <th>Talle</th>
+                  <th>Stock (unid.)</th>
+                  <th>Quitar</th>
+                </tr>
+              </thead>
+              <tbody id="adminSizesMatrix"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="admin-modal-footer">
+          <button type="button" id="adminProductModalCancel" class="btn-table-action">Cancelar</button>
+          <button type="submit" class="btn-admin-cta" style="background:#10b981;">Guardar Producto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Application Bootstrap Script -->
+  <script type="module" src="js/app.js"></script>
+
+</body>
+</html>
